@@ -12,12 +12,12 @@ const api_keys  ="fb8007781a73a8884e3821dc8f330cf2949b422d2a4be2bac9f1d5def50213
 
 
 export default function App() {
-
-  const [word, setWord] = useState('');
+  
+  let [word, setWord] = useState('');
   const [definition, setDefinition] = useState([]);
 
-  const [example, setExample] = useState(null);
-  const [relatedWord, setRelatedWord] = useState(null); 
+  const [example, setExample] = useState([]);
+  const [relatedWord, setRelatedWord] = useState([]); 
   
 
   const [relationShipType,setRelationShipType]=useState('');
@@ -36,34 +36,45 @@ export default function App() {
   }
 
     async function loadDefinition(){
-     
-      try {
-        const responseDefinition = await fetch(api_url+"word/"+word+"/definitions?api_key="+api_keys);
-        const jsonDefinition = await responseDefinition.json();
-        setDefinition(jsonDefinition);
-      } catch (error) {
-        Alert.alert(error);
-      } 
+      if(word!=''){
+        try {
+          const responseDefinition = await fetch(api_url+"word/"+word+"/definitions?api_key="+api_keys);
+          const jsonDefinition = await responseDefinition.json();
+          setDefinition(jsonDefinition);
+        } catch (error) {
+          Alert.alert(error);
+        } 
+      }
     }
     async function loadExample(){
-      try {
-        const responseExample = await fetch(api_url+"word/"+word+"/examples?api_key="+api_keys);
-        const jsonExample = await responseExample.json();
-        setExample(jsonExample.examples);
-
-      } catch (error) {
-        Alert.alert(error);
-      } 
+      if(word!=''){
+        try {
+          const responseExample = await fetch(api_url+"word/"+word+"/examples?api_key="+api_keys);
+          const jsonExample = await responseExample.json();
+          setExample(jsonExample.examples);
+  
+        } catch (error) {
+          Alert.alert(error);
+        } 
+      }
     }
     async function loadRelatedWord(){
-      try {
-        const responseRelatedWord = await fetch(api_url+"word/"+word+"/relatedWords?api_key="+api_keys);
-        const jsonRelatedWord = await responseRelatedWord.json();
-        setRelatedWord(jsonRelatedWord);
+      if(word!=''){
+        try {
+          const responseRelatedWord = await fetch(api_url+"word/"+word+"/relatedWords?api_key="+api_keys);
+          const jsonRelatedWord = await responseRelatedWord.json();
+          setRelationShipType(jsonRelatedWord[0].relationshipType);
+          setRelatedWord(jsonRelatedWord[0].words);
 
-      } catch (error) {
-        Alert.alert(error);
-      } 
+          
+  
+        } catch (error) {
+          Alert.alert(error);
+        } 
+      }
+      // console.log('word:- '+word);
+      // console.log(relationShipType);
+      // console.log(relatedWord);
     }
 
     useEffect(()=>{
@@ -72,8 +83,8 @@ export default function App() {
     useEffect(()=>{
      
       loadDefinition();
-      // loadExample();
-      // loadRelatedWord();
+      loadExample();
+      loadRelatedWord();
    },[word]);
 
   
@@ -81,8 +92,9 @@ export default function App() {
     <SafeAreaView style={styles.container}> 
        <View>
        <Text>{word}</Text>
-        <Header word={word}/>
-        <Hints definition={definition}/>
+       <Text>{relationShipType}</Text>
+        <Header  word={word} loadWord={loadWord}/>
+        <Hints  definition={definition}/> 
         </View>
 
       <StatusBar style="auto" />
@@ -95,7 +107,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff8dc',
     alignContent:'center',
-    paddingTop:50,
+    //paddingTop:StatusBar.currentHeight || 0,
+    paddingTop:40,
   },
+  header:{
+    
+  },hints:{
+
+  }
  
 });

@@ -2,8 +2,8 @@ import React,{useState,useEffect} from 'react'
 import { View ,Image,Text,TextInput,Button , StyleSheet,TouchableOpacity, Alert} from 'react-native'
 
 
-export default function Header({word}) {
-    const [count,setCount]=useState(1);
+export default function Header({word , loadWord}) {
+  const [count,setCount]=useState(1);
     const [value, onChangeText] = React.useState("");
     return (
         <View style={styles.container}>
@@ -26,10 +26,14 @@ export default function Header({word}) {
             <TouchableOpacity
             style={styles.button}
             onPress={()=>{
-              if(value == word){
-                setCount(count+1)
+              if(value.toLowerCase() == word.toLowerCase()){
+                Alert.alert('You guessed it! You earned 10 points')
+                setCount(count+10)
+                loadWord()
               }else{
-                Alert.alert('wrong guess')
+                setCount(count-5)
+                Alert.alert('wrong guess! Try Again')
+                
               }
 
             }}>
@@ -38,9 +42,13 @@ export default function Header({word}) {
 
            <TouchableOpacity
             style={styles.button}
-            onPress={()=>setCount(0)}
+            onPress={()=>{
+              setCount(count-4)
+              loadWord();
+              }
+            }
              >
-           <Text>Restart</Text>
+           <Text>Get New Word (4pts)</Text>
            </TouchableOpacity>
         </View>
     )
