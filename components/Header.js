@@ -1,18 +1,47 @@
-import React from 'react'
-import { View ,Image,Text,TextInput,Button , StyleSheet} from 'react-native'
+import React,{useState,useEffect} from 'react'
+import { View ,Image,Text,TextInput,Button , StyleSheet,TouchableOpacity, Alert} from 'react-native'
 
-export default function Header({count}) {
+
+export default function Header({word}) {
+    const [count,setCount]=useState(1);
+    const [value, onChangeText] = React.useState("");
     return (
         <View style={styles.container}>
             <View style={styles.image}>
                 <Image source={require('../assets/favicon.png')}></Image>
             </View>
             <Text style={styles.text}>Guess The Word</Text>
-            <TextInput style={styles.inputText} placeholder="Enter The Word"></TextInput>
+
+            <TextInput style={styles.inputText} 
+            placeholder="Enter The Word"
+            onChangeText={(text )=> onChangeText(text)}
+            value={value}>
+            </TextInput>
+
+            <Text>{value}</Text>
+            <Text>{word}</Text>
+
             <Text style={styles.text}>Score:{count}</Text>
-            <Button
-            title="Enter"
-            />
+           
+            <TouchableOpacity
+            style={styles.button}
+            onPress={()=>{
+              if(value == word){
+                setCount(count+1)
+              }else{
+                Alert.alert('wrong guess')
+              }
+
+            }}>
+           <Text>Enter</Text>
+           </TouchableOpacity>
+
+           <TouchableOpacity
+            style={styles.button}
+            onPress={()=>setCount(0)}
+             >
+           <Text>Restart</Text>
+           </TouchableOpacity>
         </View>
     )
 }
@@ -37,10 +66,18 @@ const styles = StyleSheet.create({
       inputText:{
         marginTop:10,
         height:40,
-        width:200,
+        width:300,
         borderColor:"black",
         borderWidth:2,
         paddingLeft:10,
         borderRadius:20,
       },
+      button:{
+        backgroundColor: "#DDDDDD",
+        alignItems:'center',
+        width:200,
+        padding:10,
+        margin:7,
+      }
+     
 })

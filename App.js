@@ -13,89 +13,75 @@ const api_keys  ="fb8007781a73a8884e3821dc8f330cf2949b422d2a4be2bac9f1d5def50213
 
 export default function App() {
 
-  const [count,setCount]=useState(1);
-  const [isLoading, setLoading] = useState(true);
   const [word, setWord] = useState('');
-  const [definition, setDefinition] = useState([{
-    "text": "A fluid present in a body part in abnormal quantities as a result of injury or disease:  water on the knee. "
-},
-{
-    "text": "The fluid surrounding a fetus in the uterus; amniotic fluid."
-}]);
+  const [definition, setDefinition] = useState([]);
 
-  const [example, setExample] = useState([]);
-  const [relatedWord, setRelatedWord] = useState([]);
+  const [example, setExample] = useState(null);
+  const [relatedWord, setRelatedWord] = useState(null); 
+  
+
+  const [relationShipType,setRelationShipType]=useState('');
 
   
 
-    async function load(){
-      
-      try {
-        const responseWord = await fetch(api_url+"words/randomWord?api_key="+api_keys);
+  async function loadWord(){
+   
+    try{
+      const responseWord = await fetch(api_url+"words/randomWord?api_key="+api_keys);
         const jsonWord = await responseWord.json();
         setWord(jsonWord.word);
+    }catch(error){
+      Alert.alert(error);
+    }
+  }
 
+    async function loadDefinition(){
+     
+      try {
         const responseDefinition = await fetch(api_url+"word/"+word+"/definitions?api_key="+api_keys);
         const jsonDefinition = await responseDefinition.json();
         setDefinition(jsonDefinition);
+      } catch (error) {
+        Alert.alert(error);
+      } 
+    }
+    async function loadExample(){
+      try {
+        const responseExample = await fetch(api_url+"word/"+word+"/examples?api_key="+api_keys);
+        const jsonExample = await responseExample.json();
+        setExample(jsonExample.examples);
 
       } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+        Alert.alert(error);
+      } 
+    }
+    async function loadRelatedWord(){
+      try {
+        const responseRelatedWord = await fetch(api_url+"word/"+word+"/relatedWords?api_key="+api_keys);
+        const jsonRelatedWord = await responseRelatedWord.json();
+        setRelatedWord(jsonRelatedWord);
+
+      } catch (error) {
+        Alert.alert(error);
+      } 
     }
 
-  // const guessWord = async () => {
-  //   try {
-  //     const response = await fetch(api_url+"words/randomWord?api_key="+api_keys);
-  //     const json = await response.json();
-  //     setWord(json.word);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+    useEffect(()=>{
+       loadWord();
+    },[]);
+    useEffect(()=>{
+     
+      loadDefinition();
+      // loadExample();
+      // loadRelatedWord();
+   },[word]);
 
-
-  // function btnClick(){
-
-  //   // alert('Button clicked')
-  //   // useEffect(() => {
-  //   //   getDefinition(word);
-  //   //     },[]);
-   
-  
-  // }
-  // const btnClick=()=>{
-  //    setCount(count+1)
-  // }
-
-  // const getDefinition=async(word)=>{
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch(api_url+"word/"+word+"/definitions?api_key="+api_keys);
-  //     const json = await response.json();
-  //     setDefinition(json);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-
-  //    //console.log(definition);
-
-  // }
-  
-
-  
   
   return (
     <SafeAreaView style={styles.container}> 
        <View>
-     
-        <Header count={count}/>
+       <Text>{word}</Text>
+        <Header word={word}/>
         <Hints definition={definition}/>
         </View>
 
