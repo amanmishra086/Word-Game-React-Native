@@ -1,10 +1,18 @@
 import React,{useState,useEffect} from 'react'
 import { View ,Image,Text,TextInput,Button , StyleSheet,TouchableOpacity, Alert} from 'react-native'
 
+import Hints from './Hints';
 
-export default function Header({word , loadWord}) {
-  const [count,setCount]=useState(1);
+
+export default function Header({definition,word , loadWord}) {
+  const [count,setCount]=useState(0);
     const [value, onChangeText] = React.useState("");
+
+    function decrementCount(points){
+      setCount(count-points);
+    }
+
+
     return (
         <View style={styles.container}>
             <View style={styles.image}>
@@ -43,13 +51,17 @@ export default function Header({word , loadWord}) {
            <TouchableOpacity
             style={styles.button}
             onPress={()=>{
-              setCount(count-4)
+              decrementCount(4);
+              //setCount(count-4)
               loadWord();
               }
             }
              >
            <Text>Get New Word (4pts)</Text>
            </TouchableOpacity>
+
+        <Hints  definition={definition} decrementCount={decrementCount} /> 
+
         </View>
     )
 }

@@ -1,25 +1,27 @@
 import React , { useEffect, useState } from 'react'
-import { View ,TouchableOpacity, Text,StyleSheet ,FlatList, Button, Alert,Dimensions} from 'react-native'
+import { View ,TouchableOpacity, Text,StyleSheet ,FlatList, Button, Alert,Dimensions, ScrollView} from 'react-native'
 
 
-const Items = ({definition })=>{
+const Items = ({definition ,decrementCount})=>{
    const [hintCount, setHintCount] = useState(1);
    const [hintType, setHintType] = useState('Synonym');
    const [visible,setVisible]=useState(false);
-   const [showElement,setShowElement]=useState('');
+   const [showElement,setShowElement]=useState(['hello']);
  
+   
+
    const Hints=({itemVar})=>{
-       if(visible && itemVar.text==showElement){
+       if(visible &&  showElement.includes(itemVar.text)){
            return <Text  >{itemVar.text}</Text>
        }else{
-          return <Text>hello</Text>
+          return <Text></Text>
        }
 
    }
 
 
     return(
-            <View >
+            <View > 
                 <FlatList 
                 data={definition}
                 keyExtractor={(item) => item.text}
@@ -33,8 +35,8 @@ const Items = ({definition })=>{
                         <Hints style={styles.hintText} itemVar={item}/>
                         <Button title="Reveal Hint"
                             onPress={()=>{
-
-                               setShowElement(item.text) 
+                               decrementCount(2)
+                              setShowElement( arr => [...arr, item.text]);
                                setVisible(true);
                             }}
                            
@@ -42,6 +44,7 @@ const Items = ({definition })=>{
                     </View>
                 )} 
             />
+           
             </View> 
 
     )
@@ -50,12 +53,13 @@ const Items = ({definition })=>{
 
 }
 
-export default function Hints({definition}) {
+export default function Hints({definition , decrementCount}) {
 
+    
     
     return (
         <View style={styles.container}>
-            <Items definition={definition}/>
+            <Items definition={definition} decrementCount={decrementCount}/>
 
         </View>
        

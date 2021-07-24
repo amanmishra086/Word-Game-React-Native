@@ -22,6 +22,11 @@ export default function App() {
 
   const [relationShipType,setRelationShipType]=useState('');
 
+  const [shuffle,setShuffle]=useState('');
+  const [firstLetter, setFirstLetter] = useState('')
+  const [lastLetter, setLastLetter] = useState('')
+  const [length, setLength] = useState(0)
+
   
 
   async function loadWord(){
@@ -30,6 +35,7 @@ export default function App() {
       const responseWord = await fetch(api_url+"words/randomWord?api_key="+api_keys);
         const jsonWord = await responseWord.json();
         setWord(jsonWord.word);
+       
     }catch(error){
       Alert.alert(error);
     }
@@ -77,6 +83,20 @@ export default function App() {
       // console.log(relatedWord);
     }
 
+    String.prototype.shuffle = function () {
+      var a = this.split(""),
+          n = a.length;
+  
+      for(var i = n - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = a[i];
+          a[i] = a[j];
+          a[j] = tmp;
+      }
+      setShuffle(a.join(""));
+      return a.join("");
+  }
+
     useEffect(()=>{
        loadWord();
     },[]);
@@ -85,16 +105,23 @@ export default function App() {
       loadDefinition();
       loadExample();
       loadRelatedWord();
+     word.shuffle();
+     setFirstLetter(word.charAt(0));
+     setLastLetter(word.charAt(word.length-1))
+     setLength(word.length);
+
    },[word]);
 
+   
   
   return (
     <SafeAreaView style={styles.container}> 
        <View>
        <Text>{word}</Text>
        <Text>{relationShipType}</Text>
-        <Header  word={word} loadWord={loadWord}/>
-        <Hints  definition={definition}/> 
+     
+        <Header definition={definition} word={word} loadWord={loadWord}/>
+        {/* <Hints  definition={definition}/>  */}
         </View>
 
       <StatusBar style="auto" />
