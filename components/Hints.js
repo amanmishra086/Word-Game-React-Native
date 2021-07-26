@@ -1,41 +1,44 @@
 import React , { useEffect, useState } from 'react'
-import { View ,TouchableOpacity, Text,StyleSheet ,FlatList, Button, Alert,Dimensions, ScrollView} from 'react-native'
+import { View ,ActivityIndicator,TouchableOpacity, Text,StyleSheet ,FlatList, Button, Alert,Dimensions, ScrollView} from 'react-native'
 
 
-const Items = ({definition ,decrementCount})=>{
+const Items = ({definition ,example ,decrementCount , combined})=>{
    const [hintCount, setHintCount] = useState(1);
-   const [hintType, setHintType] = useState('Synonym');
+   //const [hintType, setHintType] = useState('Synonym');
    const [visible,setVisible]=useState(false);
    const [showElement,setShowElement]=useState(['hello']);
  
    
+   
 
-   const Hints=({itemVar})=>{
+   const Hints=({itemVar })=>{
        if(visible &&  showElement.includes(itemVar.text)){
-           return <Text  >{itemVar.text}</Text>
+           return <Text>{itemVar.text}</Text>
        }else{
           return <Text></Text>
        }
-
+  
    }
 
+   
 
     return(
-            <View > 
-                <FlatList 
-                data={definition}
+           
+                <FlatList
+                data={combined}
                 keyExtractor={(item) => item.text}
                 
-                renderItem={({ item }) => (
+                renderItem={({ item ,index}) => (
                     <View style={styles.hints}>
-                        <View style={styles.hintHeader}>
-                            <Text>Hint:{hintCount} ({hintType})</Text>
-                            <Text>Free</Text>
+                       <View style={styles.hintHeader}>
+                            <Text>Hint:{index+2} ({item.hintType})</Text>
+                            <Text>{item.points} points</Text>
                         </View>
+                       
                         <Hints style={styles.hintText} itemVar={item}/>
                         <Button title="Reveal Hint"
                             onPress={()=>{
-                               decrementCount(2)
+                               decrementCount(item.points)
                               setShowElement( arr => [...arr, item.text]);
                                setVisible(true);
                             }}
@@ -45,25 +48,54 @@ const Items = ({definition ,decrementCount})=>{
                 )} 
             />
            
-            </View> 
 
     )
-
-
-
 }
 
-export default function Hints({definition , decrementCount}) {
+export default function Hints({definition ,example, decrementCount , combined}) {
 
     
-    
-    return (
-        <View style={styles.container}>
-            <Items definition={definition} decrementCount={decrementCount}/>
+        // console.log('def:-'+definition.length)
+        // console.log('combined:-'+combined.length)
 
-        </View>
-       
-    )
+
+        const FirstHints=({definition})=>{
+            if( definition.length>0){
+                return <Text>{definition[0].text}</Text>
+            }else{
+               return <Text>...</Text>
+            }
+        }
+        
+        return (
+            <View style={styles.container}>
+                <View style={styles.hints}>
+                            <View style={styles.hintHeader}>
+                                    <Text>Hint:{1} (definition)</Text>
+                                    <Text>Free</Text>
+                                </View>
+                            
+                            <FirstHints definition={definition}/>
+                            {/* <FlatList
+                                data={definition}
+                                keyExtractor={(item) => item.text}
+                                 
+                                renderItem={(item)=>{
+                                    <View>
+                                    <Text>ffffffff</Text>
+                                     <Text>{item}</Text>
+                                     </View>
+                                }}
+                            /> */}
+     
+                            </View>
+
+                <Items definition={definition} example={example} decrementCount={decrementCount} combined={combined}  />
+            </View>
+           
+        )
+    
+    
 }
 
 const styles = StyleSheet.create({
@@ -71,7 +103,6 @@ const styles = StyleSheet.create({
 
         backgroundColor:'red',
         borderWidth:2,
-        alignItems:'center',
        
     },
     hints:{

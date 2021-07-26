@@ -1,22 +1,40 @@
 import React,{useState,useEffect} from 'react'
-import { View ,Image,Text,TextInput,Button , StyleSheet,TouchableOpacity, Alert} from 'react-native'
+import { View ,Image,Text,TextInput,Button , StyleSheet,TouchableOpacity, Alert, FlatList} from 'react-native'
 
 import Hints from './Hints';
 
 
-export default function Header({definition,word , loadWord}) {
+export default function Header({definition, example, word , loadWord , relatedWord , relatedWord2, combined}) {
   const [count,setCount]=useState(0);
     const [value, onChangeText] = React.useState("");
+
+    
 
     function decrementCount(points){
       setCount(count-points);
     }
 
-
     return (
+      <FlatList
+        ListHeaderComponent={
+
         <View style={styles.container}>
             <View style={styles.image}>
-                <Image source={require('../assets/favicon.png')}></Image>
+                <Image style={styles.logo} source={require('../assets/favicon.png')}></Image>
+                <TouchableOpacity
+                  style={styles.restart}
+                  onPress={()=>{
+                    Alert.alert('restart the game again')
+                    setCount(0)
+                    loadWord();
+                    }
+                  }
+                  >
+               <Image style={{
+                  width:30,height:30}}
+                   source={require('../assets/restart3.png')}></Image>
+                </TouchableOpacity>
+                
             </View>
             <Text style={styles.text}>Guess The Word</Text>
 
@@ -26,7 +44,7 @@ export default function Header({definition,word , loadWord}) {
             value={value}>
             </TextInput>
 
-            <Text>{value}</Text>
+           
             <Text>{word}</Text>
 
             <Text style={styles.text}>Score:{count}</Text>
@@ -38,9 +56,12 @@ export default function Header({definition,word , loadWord}) {
                 Alert.alert('You guessed it! You earned 10 points')
                 setCount(count+10)
                 loadWord()
-              }else{
-                setCount(count-5)
-                Alert.alert('wrong guess! Try Again')
+              }else if(relatedWord.includes(value.toLowerCase()) || relatedWord2.includes(value.toLowerCase())){
+                Alert.alert('You guess a synonym of the word')
+              }
+              else{
+                setCount(count-2)
+                Alert.alert('Wrong guess! You lost 2 points')
                 
               }
 
@@ -60,23 +81,29 @@ export default function Header({definition,word , loadWord}) {
            <Text>Get New Word (4pts)</Text>
            </TouchableOpacity>
 
-        <Hints  definition={definition} decrementCount={decrementCount} /> 
-
         </View>
+        }
+        
+        ListFooterComponent={
+           <Hints  definition={definition} example={example} decrementCount={decrementCount} combined={combined}/> 
+        }
+       />
     )
 }
 
 const styles = StyleSheet.create({
     container:{
+       
         width:'100%',
         backgroundColor: 'yellow',
         alignItems: 'center',
         paddingTop:20,
-        paddingBottom:20,
+        
         borderWidth:3,
     },
     image:{
-        alignContent:'center',
+        flexDirection:'row',
+        alignItems:'center'
       },
       text:{
         fontSize:20,
@@ -98,6 +125,12 @@ const styles = StyleSheet.create({
         width:200,
         padding:10,
         margin:7,
+      },
+      restart:{
+         left:140,
+      },
+      logo:{
+        justifyContent:'center'
       }
      
 })
