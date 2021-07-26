@@ -15,8 +15,9 @@ export default function Header({definition, example, word , loadWord , relatedWo
     }
 
     return (
-      <FlatList
-        ListHeaderComponent={
+      
+       // ListHeaderComponent={
+         <View>
 
         <View style={styles.container}>
             <View style={styles.image}>
@@ -82,12 +83,17 @@ export default function Header({definition, example, word , loadWord , relatedWo
            </TouchableOpacity>
 
         </View>
-        }
+        {/* } */}
+        <FlatList
         
+        ListHeaderComponent={
+           <Hints definition={definition} example={example} decrementCount={decrementCount} combined={combined}/> 
+        }
         ListFooterComponent={
-           <Hints  definition={definition} example={example} decrementCount={decrementCount} combined={combined}/> 
+          <Text></Text>
         }
        />
+       </View>
     )
 }
 
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
     container:{
        
         width:'100%',
-        backgroundColor: 'yellow',
+        backgroundColor: '#90ee90',
         alignItems: 'center',
         paddingTop:20,
         

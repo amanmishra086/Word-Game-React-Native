@@ -101,7 +101,6 @@ export default function Hints({definition ,example, decrementCount , combined}) 
 const styles = StyleSheet.create({
     container:{
 
-        backgroundColor:'red',
         borderWidth:2,
        
     },
